@@ -50,7 +50,6 @@ public class UdfpsAnimation extends ImageView {
     private static final String UDFPS_ANIM_STYLE =
             "system:" + Settings.System.UDFPS_ANIM_STYLE;
 
-    private boolean mShowing = false;
     private Context mContext;
     private int mAnimationSize;
     private int mAnimationOffset;
@@ -136,8 +135,7 @@ public class UdfpsAnimation extends ImageView {
     }
 
     public void show() {
-        if (!mShowing && mIsKeyguard && mEnabled) {
-            mShowing = true;
+        if (mIsKeyguard && mEnabled) {
             try {
                 if (getWindowToken() == null) {
                     mWindowManager.addView(this, mAnimParams);
@@ -145,7 +143,8 @@ public class UdfpsAnimation extends ImageView {
                     mWindowManager.updateViewLayout(this, mAnimParams);
                 }
             } catch (RuntimeException e) {
-                // Ignore
+                e.printStackTrace();
+                return;
             }
             if (recognizingAnim != null) {
                 recognizingAnim.start();
@@ -154,8 +153,7 @@ public class UdfpsAnimation extends ImageView {
     }
 
     public void hide() {
-        if (mShowing) {
-            mShowing = false;
+        if (mIsKeyguard && mEnabled) {
             if (recognizingAnim != null) {
                 clearAnimation();
                 recognizingAnim.stop();
